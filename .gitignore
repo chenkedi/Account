@@ -1,0 +1,27 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Build
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.dart_tool/
+
+# Config
+server/config.yaml
+
+# Temporary files
+*.tmp
+*.swp
+.DS_Store
+
+# FVM
+flutter/.fvm/
+
+# Trees
+.trees/
+
+# Claude
+.claude/agents/

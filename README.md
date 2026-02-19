@@ -107,6 +107,85 @@ flutter run  # or flutter run -d chrome for web
 - **Date/Time**: intl
 - **Storage**: shared_preferences
 
+## Database Schema Design
+
+### users (用户表)
+| 字段名 | 中文含义 | 主键/外键 | 数据类型 | 说明 |
+|--------|----------|-----------|----------|------|
+| id | 用户ID | PK | UUID | 主键，默认自动生成 |
+| email | 邮箱 | - | VARCHAR(255) | 唯一，不能为空 |
+| password_hash | 密码哈希 | - | VARCHAR(255) | 加密后的密码 |
+| created_at | 创建时间 | - | TIMESTAMPTZ | 创建时间，默认当前时间 |
+| updated_at | 更新时间 | - | TIMESTAMPTZ | 更新时间，默认当前时间 |
+
+### accounts (账户表)
+| 字段名 | 中文含义 | 主键/外键 | 数据类型 | 说明 |
+|--------|----------|-----------|----------|------|
+| id | 账户ID | PK | UUID | 主键，默认自动生成 |
+| user_id | 用户ID | FK | UUID | 关联users表，级联删除 |
+| name | 账户名称 | - | VARCHAR(255) | 账户显示名称 |
+| type | 账户类型 | - | VARCHAR(50) | bank/cash/alipay/wechat等 |
+| currency | 货币 | - | VARCHAR(3) | 默认CNY |
+| balance | 余额 | - | DECIMAL(15,2) | 账户当前余额 |
+| created_at | 创建时间 | - | TIMESTAMPTZ | 创建时间，默认当前时间 |
+| updated_at | 更新时间 | - | TIMESTAMPTZ | 更新时间，默认当前时间 |
+| last_modified_at | 最后修改时间 | - | TIMESTAMPTZ | 用于同步冲突检测 |
+| version | 版本号 | - | INTEGER | 数据版本，递增 |
+| is_deleted | 是否已删除 | - | BOOLEAN | 软删除标记 |
+
+### categories (分类表)
+| 字段名 | 中文含义 | 主键/外键 | 数据类型 | 说明 |
+|--------|----------|-----------|----------|------|
+| id | 分类ID | PK | UUID | 主键，默认自动生成 |
+| user_id | 用户ID | FK | UUID | 关联users表，级联删除 |
+| name | 分类名称 | - | VARCHAR(255) | 分类显示名称 |
+| type | 类型 | - | VARCHAR(20) | income/expense |
+| parent_id | 父分类ID | FK | UUID | 关联categories表，支持多级分类 |
+| icon | 图标 | - | VARCHAR(100) | 图标标识 |
+| created_at | 创建时间 | - | TIMESTAMPTZ | 创建时间，默认当前时间 |
+| updated_at | 更新时间 | - | TIMESTAMPTZ | 更新时间，默认当前时间 |
+| last_modified_at | 最后修改时间 | - | TIMESTAMPTZ | 用于同步冲突检测 |
+| version | 版本号 | - | INTEGER | 数据版本，递增 |
+| is_deleted | 是否已删除 | - | BOOLEAN | 软删除标记 |
+
+### transactions (交易表)
+| 字段名 | 中文含义 | 主键/外键 | 数据类型 | 说明 |
+|--------|----------|-----------|----------|------|
+| id | 交易ID | PK | UUID | 主键，默认自动生成 |
+| user_id | 用户ID | FK | UUID | 关联users表，级联删除 |
+| account_id | 账户ID | FK | UUID | 关联accounts表 |
+| category_id | 分类ID | FK | UUID | 关联categories表 |
+| type | 交易类型 | - | VARCHAR(20) | income/expense/transfer |
+| amount | 金额 | - | DECIMAL(15,2) | 交易金额 |
+| currency | 货币 | - | VARCHAR(3) | 默认CNY |
+| note | 备注 | - | TEXT | 交易备注 |
+| transaction_date | 交易日期 | - | TIMESTAMPTZ | 交易发生时间 |
+| created_at | 创建时间 | - | TIMESTAMPTZ | 创建时间，默认当前时间 |
+| updated_at | 更新时间 | - | TIMESTAMPTZ | 更新时间，默认当前时间 |
+| last_modified_at | 最后修改时间 | - | TIMESTAMPTZ | 用于同步冲突检测 |
+| version | 版本号 | - | INTEGER | 数据版本，递增 |
+| is_deleted | 是否已删除 | - | BOOLEAN | 软删除标记 |
+
+### transfer_links (转账关联表)
+| 字段名 | 中文含义 | 主键/外键 | 数据类型 | 说明 |
+|--------|----------|-----------|----------|------|
+| id | 关联ID | PK | UUID | 主键，默认自动生成 |
+| from_transaction_id | 转出交易ID | FK | UUID | 关联transactions表（转出） |
+| to_transaction_id | 转入交易ID | FK | UUID | 关联transactions表（转入） |
+| created_at | 创建时间 | - | TIMESTAMPTZ | 创建时间，默认当前时间 |
+
+### sync_state (同步状态表)
+| 字段名 | 中文含义 | 主键/外键 | 数据类型 | 说明 |
+|--------|----------|-----------|----------|------|
+| user_id | 用户ID | PK, FK | UUID | 关联users表，级联删除 |
+| device_id | 设备ID | PK | VARCHAR(255) | 设备唯一标识 |
+| last_sync_at | 最后同步时间 | - | TIMESTAMPTZ | 上次同步完成时间 |
+| sync_token | 同步令牌 | - | VARCHAR(255) | 同步状态令牌 |
+| created_at | 创建时间 | - | TIMESTAMPTZ | 创建时间，默认当前时间 |
+| updated_at | 更新时间 | - | TIMESTAMPTZ | 更新时间，默认当前时间 |
+
+**说明**: 联合主键 (user_id, device_id)，每个设备每个用户一条记录
+
 ## Development Status
 
 Phase 1: Server Foundation - Completed ✓
