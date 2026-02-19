@@ -128,7 +128,7 @@ class _LineChartWidget extends StatelessWidget {
         ],
         lineTouchData: LineTouchData(
           touchTooltipData: LineTouchTooltipData(
-            getTooltipColor: (touchedSpot) => colorScheme.surfaceVariant,
+            tooltipBgColor: colorScheme.surfaceVariant,
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((spot) {
                 final index = spot.x.toInt();

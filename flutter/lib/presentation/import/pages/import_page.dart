@@ -14,7 +14,7 @@ class ImportPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => di.sl<ImportBloc>()..add(const ImportLoadSources()),
+      create: (_) => di.sl<ImportBloc>()..add(ImportLoadSources()),
       child: const ImportView(),
     );
   }
@@ -38,9 +38,9 @@ class ImportView extends StatelessWidget {
             case ImportScreen.upload:
               return const FileUpload();
             case ImportScreen.preview:
-              return const ImportPreview();
+              return const ImportPreviewWidget();
             case ImportScreen.result:
-              return const ImportResult();
+              return const ImportResultWidget();
           }
         },
       ),
@@ -61,7 +61,7 @@ class _LeadingBackButton extends StatelessWidget {
         return IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            context.read<ImportBloc>().add(const ImportBackPressed());
+            context.read<ImportBloc>().add(ImportBackPressed());
           },
         );
       },

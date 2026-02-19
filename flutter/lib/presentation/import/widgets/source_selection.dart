@@ -24,7 +24,7 @@ class SourceSelection extends StatelessWidget {
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () {
-                    context.read<ImportBloc>().add(const ImportLoadSources());
+                    context.read<ImportBloc>().add(ImportLoadSources());
                   },
                   child: const Text('重试'),
                 ),

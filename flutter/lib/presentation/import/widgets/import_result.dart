@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/models/import.dart';
+import '../../../data/models/import.dart' as models;
 import '../bloc/import_bloc.dart';
 
-class ImportResult extends StatelessWidget {
-  const ImportResult({super.key});
+class ImportResultWidget extends StatelessWidget {
+  const ImportResultWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +82,7 @@ class _ResultIcon extends StatelessWidget {
 }
 
 class _ResultSummary extends StatelessWidget {
-  final ImportResult result;
+  final models.ImportResult result;
 
   const _ResultSummary({required this.result});
 
@@ -160,7 +160,7 @@ class _SummaryRow extends StatelessWidget {
 }
 
 class _ErrorList extends StatelessWidget {
-  final List<ImportError> errors;
+  final List<models.ImportError> errors;
 
   const _ErrorList({required this.errors});
 

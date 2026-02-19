@@ -1,5 +1,5 @@
+import '../datasources/local/database/app_database.dart';
 import '../datasources/local/database/daos/category_dao.dart';
-import '../datasources/local/database/tables/category_table.dart';
 import '../../core/network/api_client.dart';
 
 class CategoryRepository {

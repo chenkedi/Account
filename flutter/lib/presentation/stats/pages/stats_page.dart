@@ -13,7 +13,7 @@ class StatsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => di.sl<StatsBloc>()..add(const StatsLoadRequested()),
+      create: (_) => di.sl<StatsBloc>()..add(StatsLoadRequested()),
       child: const StatsView(),
     );
   }
@@ -69,7 +69,7 @@ class _ErrorView extends StatelessWidget {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
-              context.read<StatsBloc>().add(const StatsLoadRequested());
+              context.read<StatsBloc>().add(StatsLoadRequested());
             },
             child: const Text('重试'),
           ),

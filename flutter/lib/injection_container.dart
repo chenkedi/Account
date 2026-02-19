@@ -54,7 +54,6 @@ Future<void> initDependencies() async {
     sl(),
     sl(),
     sl(),
-    sl(),
   ));
 
   // BLoCs (Factories)

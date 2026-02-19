@@ -1,5 +1,5 @@
+import '../datasources/local/database/app_database.dart';
 import '../datasources/local/database/daos/account_dao.dart';
-import '../datasources/local/database/tables/account_table.dart';
 import '../../core/network/api_client.dart';
 
 class AccountRepository {

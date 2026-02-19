@@ -76,7 +76,11 @@ class TransactionDao extends DatabaseAccessor<AppDatabase> with _$TransactionDao
               t.type.equals('income') &
               t.transactionDate.isBetweenValues(start, end)))
         .get();
-    return result.fold(0, (sum, t) => sum + t.amount);
+    double total = 0;
+    for (final t in result) {
+      total += t.amount;
+    }
+    return total;
   }
 
   Future<double> getTotalExpenseForPeriod(DateTime start, DateTime end) async {
@@ -86,6 +90,10 @@ class TransactionDao extends DatabaseAccessor<AppDatabase> with _$TransactionDao
               t.type.equals('expense') &
               t.transactionDate.isBetweenValues(start, end)))
         .get();
-    return result.fold(0, (sum, t) => sum + t.amount);
+    double total = 0;
+    for (final t in result) {
+      total += t.amount;
+    }
+    return total;
   }
 }

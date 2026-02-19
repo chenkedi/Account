@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/models/import.dart';
+import '../../../data/models/import.dart' as models;
+import '../../../data/models/transaction.dart';
 import '../../../core/utils/date_utils.dart' as date_utils;
 import '../../../core/utils/amount_utils.dart' as amount_utils;
 import '../bloc/import_bloc.dart';
 
-class ImportPreview extends StatelessWidget {
-  const ImportPreview({super.key});
+class ImportPreviewWidget extends StatelessWidget {
+  const ImportPreviewWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +41,7 @@ class ImportPreview extends StatelessWidget {
 }
 
 class _SummaryHeader extends StatelessWidget {
-  final ImportPreview preview;
+  final models.ImportPreview preview;
 
   const _SummaryHeader({required this.preview});
 
@@ -121,7 +122,7 @@ class _SummaryItem extends StatelessWidget {
 }
 
 class _TransactionList extends StatelessWidget {
-  final List<ParsedTransaction> transactions;
+  final List<models.ParsedTransaction> transactions;
   final List<dynamic> categories;
   final Map<String, List<dynamic>>? accountSuggestions;
 
@@ -150,7 +151,7 @@ class _TransactionList extends StatelessWidget {
 
 class _TransactionTile extends StatelessWidget {
   final int index;
-  final ParsedTransaction transaction;
+  final models.ParsedTransaction transaction;
   final List<dynamic> categories;
 
   const _TransactionTile({
@@ -235,7 +236,7 @@ class _TransactionTile extends StatelessWidget {
 
 class _TransactionDetails extends StatelessWidget {
   final int index;
-  final ParsedTransaction transaction;
+  final models.ParsedTransaction transaction;
   final List<dynamic> categories;
 
   const _TransactionDetails({
@@ -278,7 +279,7 @@ class _TransactionDetails extends StatelessWidget {
 
 class _AccountSelector extends StatelessWidget {
   final int index;
-  final ParsedTransaction transaction;
+  final models.ParsedTransaction transaction;
 
   const _AccountSelector({
     required this.index,
@@ -346,7 +347,7 @@ class _DetailRow extends StatelessWidget {
 }
 
 class _BottomActions extends StatelessWidget {
-  final ImportPreview preview;
+  final models.ImportPreview preview;
 
   const _BottomActions({required this.preview});
 
@@ -374,7 +375,7 @@ class _BottomActions extends StatelessWidget {
                     onPressed: isLoading || !canImport
                         ? null
                         : () {
-                            context.read<ImportBloc>().add(const ImportConfirmed());
+                            context.read<ImportBloc>().add(ImportConfirmed());
                           },
                     child: isLoading
                         ? const SizedBox(
