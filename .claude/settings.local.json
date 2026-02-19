@@ -4,7 +4,20 @@
       "WebSearch",
       "WebFetch(domain:semaphoreci.com)",
       "WebFetch(domain:semaphore.io)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(source:*)",
+      "Bash(export:*)",
+      "Bash(go test -v ./test/unit)",
+      "Bash(go test -v ./test/integration)",
+      "Bash(go build:*)",
+      "Bash(go test -v ./test/...)",
+      "Bash(go version:*)",
+      "Bash(go test ./test/unit -v)",
+      "Bash(go test ./test/integration -v)",
+      "Bash(go test ./test/api -v)",
+      "Bash(/usr/local/go/bin/go test:*)",
+      "Bash(/usr/local/go/bin/go build:*)",
+      "Bash(git add:*)"
     ]
   }
 }

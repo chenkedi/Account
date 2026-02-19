@@ -664,7 +664,7 @@ func (s *ImportService) parseGenericCSV(r io.Reader) ([]models.ParsedTransaction
 		}
 
 		// Try to find date in any column
-		for key, val := range tx.RawData {
+		for _, val := range tx.RawData {
 			if val == "" {
 				continue
 			}
@@ -704,7 +704,7 @@ func (s *ImportService) parseGenericCSV(r io.Reader) ([]models.ParsedTransaction
 
 		// Use other columns as note
 		var notes []string
-		for key, val := range tx.RawData {
+		for _, val := range tx.RawData {
 			if val == "" {
 				continue
 			}

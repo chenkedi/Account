@@ -10,9 +10,9 @@ import (
 	_ "github.com/lib/pq"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
-	"gopkg.in/golang-migrate/migrate.v4"
-	"gopkg.in/golang-migrate/migrate.v4/database/postgres"
-	_ "gopkg.in/golang-migrate/migrate.v4/source/file"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func NewPostgres(cfg *config.Config) (*sqlx.DB, error) {

@@ -5,7 +5,7 @@ import (
 	"account/pkg/auth"
 	"encoding/json"
 	"net/http"
-	"sync"
+	stdsync "sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -38,7 +38,7 @@ type WebSocketHandler struct {
 	syncNotifier *sync.SyncNotifier
 	tokenMgr     *auth.TokenManager
 	logger       *zap.Logger
-	mu           sync.Mutex
+	mu           stdsync.Mutex
 	connections  map[uuid.UUID]map[string]*WebSocketConnection
 }
 

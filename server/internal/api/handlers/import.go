@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"go.uber.org/zap"
 )
 
@@ -212,10 +213,8 @@ func (h *ImportHandler) GetSupportedSources(c *gin.Context) {
 }
 
 // parseUUID safely parses a UUID string
-func parseUUID(s string) (interface{}, error) {
-	// This is a placeholder - use google/uuid in real implementation
-	// For now, just return a dummy value
-	return s, nil
+func parseUUID(s string) (uuid.UUID, error) {
+	return uuid.Parse(s)
 }
 
 // Helper function to get file extension
