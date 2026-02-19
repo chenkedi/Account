@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:semaphoreci.com)",
+      "WebFetch(domain:semaphore.io)",
+      "Bash(find:*)"
+    ]
+  }
+}

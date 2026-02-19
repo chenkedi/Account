@@ -1,0 +1,27 @@
+server:
+  port: "8080"
+  mode: "debug"
+  read_timeout: 15
+  write_timeout: 15
+
+database:
+  host: "localhost"
+  port: "5432"
+  user: "account"
+  password: "account"
+  dbname: "account"
+  sslmode: "disable"
+
+redis:
+  host: "localhost"
+  port: "6379"
+  password: ""
+  db: 0
+
+jwt:
+  secret: "your-super-secret-key-change-in-production-please"
+  expiry_hours: 24
+
+log:
+  level: "info"
+  format: "json"
