@@ -500,3 +500,131 @@ All phases are now complete! The application is ready for use as a personal fina
 | | `LwwStrategy` | `resolve()` (compares timestamps) |
 | **Server Data** | `TransactionRepository` | `Create()`, `CreateMany()`, `GetModifiedSince()` |
 | **Sync Notifier** | `SyncNotifier` | `notifySyncAvailable()` (WebSocket broadcast) |
+
+## Testing
+
+The Flutter app includes a comprehensive testing suite with unit tests, integration tests, and WebSocket sync flow tests.
+
+### Test Structure
+
+```
+test/
+├── helpers/
+│   ├── test_helpers.dart              # Common test utilities (multi-platform)
+│   ├── test_database_connection.dart  # Platform-agnostic test DB connection
+│   ├── test_database_connection_native.dart # Native (Linux/Android) test DB
+│   ├── test_database_connection_web.dart # Web (sql.js) test DB
+│   ├── test_database_connection_stub.dart # Stub implementation
+│   ├── mocks.dart                     # Mock class definitions
+│   └── test_data.dart                 # Test data factories
+├── unit/
+│   ├── auth/
+│   │   ├── auth_bloc_test.dart        # Auth BLoC unit tests
+│   │   └── auth_repository_test.dart  # Auth repository tests
+│   ├── transactions/
+│   │   ├── transaction_dao_test.dart  # Transaction DAO tests (local DB, multi-platform)
+│   │   └── transaction_repository_test.dart
+│   ├── sync/
+│   │   ├── lww_strategy_test.dart     # LWW conflict resolution tests
+│   │   └── sync_manager_test.dart
+│   └── core/
+│       └── websocket_client_test.dart  # WebSocket client tests
+├── integration/
+│   ├── auth_integration_test.dart     # Auth flow with mock API
+│   ├── transaction_integration_test.dart  # Transaction flow with mock API
+│   └── sync_integration_test.dart     # Full sync flow test
+└── websocket/
+    └── websocket_sync_test.dart        # WebSocket notification tests
+```
+
+### Multi-Platform Test Database Strategy
+
+**Native (Linux/Android):**
+- Uses `NativeDatabase.memory()` for true in-memory testing
+- Fast, fully isolated per test
+- No cleanup needed beyond closing the database
+
+**Web:**
+- Uses `WebDatabase` with unique database names (timestamp-based)
+- Isolation ensured by unique DB names
+- IndexedDB automatic cleanup when browser session ends
+
+The test infrastructure uses Dart conditional imports to seamlessly select the appropriate database implementation for each platform.
+
+### Multi-Platform Testing
+
+The testing suite supports both **native (Linux/Android)** and **Web** platforms.
+
+#### Linux (Native) Testing
+
+```bash
+cd flutter
+
+# Run all tests on Linux
+fvm flutter test -d linux
+
+# Run only unit tests on Linux
+fvm flutter test test/unit/ -d linux
+
+# Run a specific test file on Linux
+fvm flutter test test/unit/sync/lww_strategy_test.dart -d linux
+```
+
+#### Web Testing
+
+```bash
+cd flutter
+
+# Run all tests on Chrome (web)
+fvm flutter test -d chrome
+
+# Run only unit tests on Web
+fvm flutter test test/unit/ -d chrome
+
+# Run a specific test file on Web
+fvm flutter test test/unit/sync/lww_strategy_test.dart -d chrome
+```
+
+#### Default (VM) Testing
+
+```bash
+cd flutter
+
+# Run all tests (default VM target)
+fvm flutter test
+
+# Run only unit tests
+fvm flutter test test/unit/
+
+# Run a specific test file
+fvm flutter test test/unit/sync/lww_strategy_test.dart
+
+# Run tests with verbose output
+fvm flutter test -v
+```
+
+### Test Coverage
+
+- **Unit Tests**:
+  - LWW conflict resolution strategy
+  - Local database operations (Transaction DAO)
+  - Auth repository and BLoC
+  - Transaction repository
+  - Sync manager
+
+- **Integration Tests**:
+  - Auth flow with mocked API responses
+  - Transaction CRUD with mocked API
+  - Full sync flow
+
+- **WebSocket Tests**:
+  - WebSocket connection logic
+  - Sync notification handling
+
+### Mocking Strategy
+
+Tests use the following mocking approach:
+- `mocktail` for creating mock objects
+- `bloc_test` for BLoC testing
+- In-memory Drift database for local DB tests
+- Mocked API service and WebSocket client for integration tests
