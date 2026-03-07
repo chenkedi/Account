@@ -28,7 +28,8 @@ This is the **account** project - a complete standalone server-client applicatio
 ## Architecture
 
 - **Pattern**: Server-client architecture
-- **Clients**: Flutter (single codebase for Android + Web)
+- **Clients**: Web (React + TypeScript) - **(current primary client)**
+- **Legacy Clients**: Flutter (single codebase for Android + Web) - **DEPRECATED**
 - **Server**: Go + PostgreSQL + Redis
 
 **Key Features**:
@@ -84,7 +85,20 @@ Linux desktop build now succeeds with exit code 0.
 - **Logging**: Zap
 - **Configuration**: Viper
 
-### Client
+### Web Client (Current)
+- **Framework**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **UI Component Library**: Chakra UI
+- **State Management**: Zustand + Immer
+- **Routing**: React Router
+- **Form Handling**: React Hook Form + Zod
+- **Data Validation**: Zod
+- **HTTP Client**: Axios
+- **Charts**: Recharts
+- **Local Database**: Dexie.js (IndexedDB wrapper)
+- **Date/Time**: date-fns
+
+### Flutter Client (DEPRECATED)
 - **Framework**: Flutter 3.16+
 - **State Management**: flutter_bloc
 - **Local Database**: Drift (SQLite wrapper)
@@ -108,7 +122,16 @@ account/
 │   │   ├── data/              # Repositories and database
 │   │   └── sync/              # Sync engine
 │   └── pkg/                   # Utilities (auth, config, logger)
-├── flutter/                   # Flutter mobile and web app
+├── web/                       # React + TypeScript web app (CURRENT)
+│   ├── src/
+│   │   ├── core/              # Constants, theme, utils
+│   │   ├── data/              # Models, API services, storage
+│   │   ├── sync/              # Sync manager, WebSocket, LWW strategy
+│   │   ├── store/             # Zustand store slices
+│   │   ├── presentation/      # UI pages, components, router
+│   │   ├── App.tsx            # App component
+│   │   └── main.tsx           # App entry
+├── flutter/                   # Flutter mobile and web app (DEPRECATED)
 │   ├── lib/
 │   │   ├── core/              # Constants, theme, network, utils
 │   │   ├── data/              # Models, repositories, API service
@@ -132,9 +155,28 @@ go mod download
 go run cmd/server/main.go
 ```
 
-### Flutter App
+### Web App (Current)
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Other useful commands:
+```bash
+npm run build          # Build for production
+npm run lint           # Run linter
+npm run format         # Format code
+npm run test           # Run tests
+npm run typecheck      # Type checking
+```
+
+### Flutter App (DEPRECATED)
+> **WARNING**: flutter/ directory is deprecated. All new development should be in web/.
 
 **IMPORTANT**: All Flutter commands must be executed from the `flutter/` directory using `fvm` (Flutter Version Manager):
+fvm install location: /home/linuxbrew/.linuxbrew/bin/fvm
 
 ```bash
 cd flutter

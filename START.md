@@ -53,19 +53,6 @@ fvm flutter pub run build_runner build --delete-conflicting-outputs
 fvm flutter run -d chrome
 ```
 
-### 方式2: 直接安装指定版本
-
-从Flutter官网下载安装：
-- 访问 https://flutter.dev/docs/development/tools/sdk/releases
-- 下载Flutter 3.16.x版本
-- 解压并配置PATH环境变量
-
-```bash
-# 验证Flutter版本
-flutter --version
-flutter doctor
-```
-
 ## 步骤 1: 启动数据库和Redis
 
 ```bash
@@ -89,14 +76,6 @@ go run cmd/server/main.go
 ## 步骤 3: 启动Flutter Web应用
 
 打开一个新的终端窗口：
-
-### 使用标准Flutter命令
-```bash
-cd flutter
-flutter pub get
-flutter pub run build_runner build --delete-conflicting-outputs
-flutter run -d chrome
-```
 
 ### 使用FVM (如果安装了FVM)
 ```bash
