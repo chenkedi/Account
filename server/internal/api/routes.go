@@ -24,6 +24,7 @@ func SetupRouter(cfg *config.Config, db *sqlx.DB, redis *redis.Client, logger *z
 
 	router := gin.New()
 	router.Use(gin.Recovery())
+	router.Use(middleware.CORS())
 	router.Use(middleware.Logging(logger))
 
 	// Initialize repositories
