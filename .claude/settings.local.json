@@ -17,7 +17,17 @@
       "Bash(go test ./test/api -v)",
       "Bash(/usr/local/go/bin/go test:*)",
       "Bash(/usr/local/go/bin/go build:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(cd /home/chenkedi/workspace/account/.trees/add_feat/web && npm run typecheck 2>&1 | head -100)",
+      "Bash(cd /home/chenkedi/workspace/account/.trees/add_feat/web && npm run typecheck 2>&1 | head -80)",
+      "Bash(npx tsc --noEmit 2>&1 | head -100)",
+      "Bash(npm run build 2>&1 | head -100)",
+      "Bash(npm run build 2>&1 | head -50)",
+      "Bash(npm run build 2>&1 | tail -20)",
+      "Bash(npm run build 2>&1 | tail -30)",
+      "Bash(echo \"=== 构建状态 ===\" && npm run build 2>&1 | tail -5)",
+      "Bash(echo \"=== 验证最终状态 ===\" && echo \"\" && echo \"1. 底部导航栏 \\(5个入口\\):\" && grep -E \"path:|label:\" src/presentation/pages/home/HomePage.tsx | grep -E \"首页|交易|账户|统计|设置\" && echo \"\" && echo \"2. 构建测试:\" && npm run build 2>&1 | tail -3)",
+      "Bash(npm run build 2>&1 | grep -E \"\\(error|✓ built\\)\" | tail -5)"
     ]
   }
 }

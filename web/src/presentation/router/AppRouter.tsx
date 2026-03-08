@@ -13,6 +13,7 @@ import { ImportUploadPage } from '../pages/import/ImportUploadPage';
 import { ImportPreviewPage } from '../pages/import/ImportPreviewPage';
 import { ImportResultPage } from '../pages/import/ImportResultPage';
 import { SettingsPage } from '../pages/settings/SettingsPage';
+import { CategoriesPage } from '../pages/categories/CategoriesPage';
 
 const router = createBrowserRouter([
   {
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
       {
         path: 'settings',
         element: <SettingsPage />,
+      },
+      {
+        path: 'categories',
+        element: <CategoriesPage />,
       },
     ],
   },
