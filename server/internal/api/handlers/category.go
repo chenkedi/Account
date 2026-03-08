@@ -125,10 +125,40 @@ func (h *CategoryHandler) UpdateCategory(c *gin.Context) {
 		return
 	}
 
-	var req services.UpdateCategoryRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	// 使用中间结构来正确处理 parent_id 可以为 null 的情况
+	type UpdateCategoryRequestBody struct {
+		Name     string      `json:"name"`
+		Type     string      `json:"type"`
+		ParentID interface{} `json:"parent_id"` // 使用 interface{} 来接收 null 或 string
+		Icon     string      `json:"icon"`
+	}
+
+	var reqBody UpdateCategoryRequestBody
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	// 构建服务层请求
+	var req services.UpdateCategoryRequest
+	req.Name = reqBody.Name
+	req.Type = models.CategoryType(reqBody.Type)
+	req.Icon = reqBody.Icon
+
+	// 处理 parent_id
+	if reqBody.ParentID == nil {
+		// 显式设置为 null
+		req.ParentID = nil
+	} else if parentIDStr, ok := reqBody.ParentID.(string); ok {
+		if parentIDStr == "" {
+			// 空字符串也视为 null
+			req.ParentID = nil
+		} else {
+			// 解析 UUID
+			if parentUUID, err := uuid.Parse(parentIDStr); err == nil {
+				req.ParentID = &parentUUID
+			}
+		}
 	}
 
 	category, err := h.categoryService.UpdateCategory(id, userID, &req)

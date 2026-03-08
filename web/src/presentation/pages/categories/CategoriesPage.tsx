@@ -252,7 +252,7 @@ export function CategoriesPage() {
       // 处理 parent_id: 空字符串转为 null
       const submitData = {
         ...data,
-        parent_id: data.parent_id || null,
+        parent_id: data.parent_id === '' ? null : data.parent_id,
       };
 
       if (selectedCategory) {
@@ -263,7 +263,7 @@ export function CategoriesPage() {
           duration: 3000,
         });
       } else {
-        await createCategory(data as CategoryCreateInput);
+        await createCategory(submitData as CategoryCreateInput);
         toast({
           title: '分类已创建',
           status: 'success',

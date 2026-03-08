@@ -77,6 +77,7 @@ func (s *CategoryService) UpdateCategory(id uuid.UUID, userID uuid.UUID, req *Up
 		return nil, err
 	}
 
+	// 更新字段（前端会发送完整对象，所以直接全部更新）
 	if req.Name != "" {
 		category.Name = req.Name
 	}
@@ -86,9 +87,9 @@ func (s *CategoryService) UpdateCategory(id uuid.UUID, userID uuid.UUID, req *Up
 		}
 		category.Type = req.Type
 	}
-	if req.ParentID != nil {
-		category.ParentID = req.ParentID
-	}
+	// 关键修复：总是更新 ParentID（允许设为 nil）
+	// 前端在更新时总会发送 parent_id 字段
+	category.ParentID = req.ParentID
 	if req.Icon != "" {
 		category.Icon = req.Icon
 	}
