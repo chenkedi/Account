@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Heading,
@@ -35,6 +36,14 @@ function LockIcon() {
     <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
+function CategoryIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
     </svg>
   );
 }
@@ -140,6 +149,7 @@ function SettingItem({ icon, label, subLabel, onClick, colorScheme = 'gray', sho
 }
 
 export function SettingsPage() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { logout } = useAuthActions();
   const toast = useToast();
@@ -226,6 +236,13 @@ export function SettingsPage() {
             <Text fontWeight="700" color="gray.800" px={2} pt={2} pb={1}>
               数据管理
             </Text>
+            <SettingItem
+              icon={<CategoryIcon />}
+              label="分类管理"
+              subLabel="管理收入和支出分类"
+              colorScheme="brand"
+              onClick={() => navigate('/categories')}
+            />
             <SettingItem
               icon={<DownloadIcon />}
               label="导出所有数据"

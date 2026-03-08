@@ -56,6 +56,10 @@ export const useAccountActions = () => useAppStore((state) => state.accountActio
 export const useCategories = () => useAppStore((state) => state.categoryState.categories);
 export const useCategoriesState = () => useAppStore((state) => state.categoryState);
 export const useCategoryActions = () => useAppStore((state) => state.categoryActions);
+export const useCategoryById = (id: string | undefined) =>
+  useAppStore((state) =>
+    id ? state.categoryState.categories.find((c) => c.id === id) : undefined
+  );
 
 export const useStats = () => useAppStore((state) => state.statsState.stats);
 export const useStatsState = () => useAppStore((state) => state.statsState);
