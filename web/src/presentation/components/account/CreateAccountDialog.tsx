@@ -45,6 +45,7 @@ export function CreateAccountDialog({
   const [formData, setFormData] = useState<AccountCreateInput>({
     name: '',
     type: 'cash',
+    tail_number: '',
     currency: 'CNY',
     balance: 0,
   });
@@ -82,6 +83,7 @@ export function CreateAccountDialog({
       setFormData({
         name: '',
         type: 'cash',
+        tail_number: '',
         currency: 'CNY',
         balance: 0,
       });
@@ -154,6 +156,16 @@ export function CreateAccountDialog({
                 <option value="JPY">日元 (JPY)</option>
                 <option value="HKD">港币 (HKD)</option>
               </Select>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>账户尾号</FormLabel>
+              <Input
+                placeholder="例如：8888（选填）"
+                maxLength={10}
+                value={formData.tail_number}
+                onChange={(e) => handleChange('tail_number', e.target.value)}
+              />
             </FormControl>
           </VStack>
         </ModalBody>

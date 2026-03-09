@@ -259,9 +259,16 @@ export function AccountsPage() {
                       </MenuList>
                     </Menu>
                   </Flex>
-                  <Text fontSize="lg" fontWeight="bold" noOfLines={1}>
-                    {account.name}
-                  </Text>
+                  <VStack align="start" spacing={0}>
+                    <Text fontSize="lg" fontWeight="bold" noOfLines={1}>
+                      {account.name}
+                    </Text>
+                    {account.tail_number && (
+                      <Text fontSize="sm" color="gray.500" fontWeight="500">
+                        尾号 {account.tail_number}
+                      </Text>
+                    )}
+                  </VStack>
                   <Text
                     fontSize="2xl"
                     fontWeight="bold"

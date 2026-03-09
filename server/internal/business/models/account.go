@@ -25,6 +25,7 @@ type Account struct {
 	UserID         uuid.UUID   `db:"user_id" json:"user_id"`
 	Name           string      `db:"name" json:"name"`
 	Type           AccountType `db:"type" json:"type"`
+	TailNumber     string      `db:"tail_number" json:"tail_number"`
 	Currency       string      `db:"currency" json:"currency"`
 	Balance        float64     `db:"balance" json:"balance"`
 	CreatedAt      time.Time   `db:"created_at" json:"created_at"`

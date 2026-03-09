@@ -23,13 +23,14 @@ func NewAccountRepository(db *sqlx.DB) *AccountRepository {
 	return &AccountRepository{db: db}
 }
 
-func (r *AccountRepository) Create(userID uuid.UUID, name string, accountType models.AccountType, currency string, balance float64) (*models.Account, error) {
+func (r *AccountRepository) Create(userID uuid.UUID, name string, accountType models.AccountType, tailNumber string, currency string, balance float64) (*models.Account, error) {
 	now := time.Now().UTC()
 	account := &models.Account{
 		ID:             uuid.New(),
 		UserID:         userID,
 		Name:           name,
 		Type:           accountType,
+		TailNumber:     tailNumber,
 		Currency:       currency,
 		Balance:        balance,
 		CreatedAt:      now,
@@ -40,12 +41,12 @@ func (r *AccountRepository) Create(userID uuid.UUID, name string, accountType mo
 	}
 
 	query := `
-		INSERT INTO accounts (id, user_id, name, type, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+		INSERT INTO accounts (id, user_id, name, type, tail_number, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 	`
 
 	_, err := r.db.Exec(query,
-		account.ID, account.UserID, account.Name, account.Type, account.Currency,
+		account.ID, account.UserID, account.Name, account.Type, account.TailNumber, account.Currency,
 		account.Balance, account.CreatedAt, account.UpdatedAt, account.LastModifiedAt,
 		account.Version, account.IsDeleted,
 	)
@@ -60,7 +61,7 @@ func (r *AccountRepository) GetByID(id uuid.UUID, userID uuid.UUID) (*models.Acc
 	var account models.Account
 
 	query := `
-		SELECT id, user_id, name, type, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted
+		SELECT id, user_id, name, type, tail_number, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted
 		FROM accounts
 		WHERE id = $1 AND user_id = $2 AND is_deleted = false
 	`
@@ -80,7 +81,7 @@ func (r *AccountRepository) GetAll(userID uuid.UUID) ([]models.Account, error) {
 	var accounts []models.Account
 
 	query := `
-		SELECT id, user_id, name, type, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted
+		SELECT id, user_id, name, type, tail_number, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted
 		FROM accounts
 		WHERE user_id = $1 AND is_deleted = false
 		ORDER BY name ASC
@@ -102,12 +103,12 @@ func (r *AccountRepository) Update(account *models.Account, userID uuid.UUID) (*
 
 	query := `
 		UPDATE accounts
-		SET name = $1, type = $2, currency = $3, balance = $4, updated_at = $5, last_modified_at = $6, version = $7
-		WHERE id = $8 AND user_id = $9 AND is_deleted = false
+		SET name = $1, type = $2, tail_number = $3, currency = $4, balance = $5, updated_at = $6, last_modified_at = $7, version = $8
+		WHERE id = $9 AND user_id = $10 AND is_deleted = false
 	`
 
 	result, err := r.db.Exec(query,
-		account.Name, account.Type, account.Currency, account.Balance,
+		account.Name, account.Type, account.TailNumber, account.Currency, account.Balance,
 		account.UpdatedAt, account.LastModifiedAt, account.Version,
 		account.ID, userID,
 	)
@@ -155,7 +156,7 @@ func (r *AccountRepository) GetModifiedSince(userID uuid.UUID, since time.Time) 
 	var accounts []models.Account
 
 	query := `
-		SELECT id, user_id, name, type, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted
+		SELECT id, user_id, name, type, tail_number, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted
 		FROM accounts
 		WHERE user_id = $1 AND last_modified_at > $2
 	`
@@ -180,11 +181,12 @@ func (r *AccountRepository) CreateMany(accounts []models.Account) error {
 	defer func() { _ = tx.Rollback() }()
 
 	query := `
-		INSERT INTO accounts (id, user_id, name, type, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted)
-		VALUES (:id, :user_id, :name, :type, :currency, :balance, :created_at, :updated_at, :last_modified_at, :version, :is_deleted)
+		INSERT INTO accounts (id, user_id, name, type, tail_number, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted)
+		VALUES (:id, :user_id, :name, :type, :tail_number, :currency, :balance, :created_at, :updated_at, :last_modified_at, :version, :is_deleted)
 		ON CONFLICT (id) DO UPDATE
 		SET name = EXCLUDED.name,
 		    type = EXCLUDED.type,
+		    tail_number = EXCLUDED.tail_number,
 		    currency = EXCLUDED.currency,
 		    balance = EXCLUDED.balance,
 		    updated_at = EXCLUDED.updated_at,
