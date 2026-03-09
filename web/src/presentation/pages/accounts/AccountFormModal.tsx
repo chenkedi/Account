@@ -23,6 +23,7 @@ import type { Account, AccountType, AccountCreateInput, AccountUpdateInput } fro
 const accountSchema = z.object({
   name: z.string().min(1, '账户名称不能为空'),
   type: z.enum(['cash', 'bank', 'credit_card', 'investment', 'other'] as const),
+  tail_number: z.string().optional(),
   balance: z.string().refine((val) => !isNaN(parseFloat(val)) && parseFloat(val) >= 0, '余额必须是有效数字'),
   currency: z.string().min(1, '货币不能为空'),
 });
@@ -71,6 +72,7 @@ export function AccountFormModal({
     defaultValues: {
       name: account?.name || '',
       type: account?.type || 'cash',
+      tail_number: account?.tail_number || '',
       balance: account?.balance.toString() || '0',
       currency: account?.currency || 'CNY',
     },
@@ -81,6 +83,7 @@ export function AccountFormModal({
       const data: AccountCreateInput | AccountUpdateInput = {
         name: values.name,
         type: values.type,
+        tail_number: values.tail_number,
         balance: parseFloat(values.balance),
         currency: values.currency,
       };
@@ -186,6 +189,20 @@ export function AccountFormModal({
                   {errors.currency.message}
                 </Box>
               )}
+            </FormControl>
+
+            <FormControl>
+              <FormLabel fontWeight="600">账户尾号</FormLabel>
+              <Controller
+                name="tail_number"
+                control={control}
+                render={({ field }) => (
+                  <Input {...field} placeholder="例如：8888（选填）" borderRadius="xl" maxLength={10} />
+                )}
+              />
+              <Box color="gray.500" fontSize="sm" mt={1}>
+                用于区分同一银行或机构的不同卡片
+              </Box>
             </FormControl>
           </VStack>
         </ModalBody>

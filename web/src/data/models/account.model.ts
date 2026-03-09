@@ -7,6 +7,7 @@ export type AccountType = z.infer<typeof AccountTypeSchema>;
 export const AccountSchema = BaseEntitySchema.extend({
   name: z.string(),
   type: AccountTypeSchema,
+  tail_number: z.string().default(''),
   currency: z.string().default('CNY'),
   balance: z.number(),
 });

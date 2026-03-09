@@ -21,17 +21,19 @@ func NewAccountService(accountRepo *repository.AccountRepository, categoryRepo *
 }
 
 type CreateAccountRequest struct {
-	Name     string                `json:"name" binding:"required"`
-	Type     models.AccountType    `json:"type" binding:"required"`
-	Currency string                `json:"currency"`
-	Balance  float64               `json:"balance"`
+	Name       string                `json:"name" binding:"required"`
+	Type       models.AccountType    `json:"type" binding:"required"`
+	TailNumber string                `json:"tail_number"`
+	Currency   string                `json:"currency"`
+	Balance    float64               `json:"balance"`
 }
 
 type UpdateAccountRequest struct {
-	Name     string                `json:"name"`
-	Type     models.AccountType    `json:"type"`
-	Currency string                `json:"currency"`
-	Balance  float64               `json:"balance"`
+	Name       string                `json:"name"`
+	Type       models.AccountType    `json:"type"`
+	TailNumber string                `json:"tail_number"`
+	Currency   string                `json:"currency"`
+	Balance    float64               `json:"balance"`
 }
 
 func (s *AccountService) CreateAccount(userID uuid.UUID, req *CreateAccountRequest) (*models.Account, error) {
@@ -43,7 +45,7 @@ func (s *AccountService) CreateAccount(userID uuid.UUID, req *CreateAccountReque
 		return nil, fmt.Errorf("invalid account type: %s", req.Type)
 	}
 
-	account, err := s.accountRepo.Create(userID, req.Name, req.Type, req.Currency, req.Balance)
+	account, err := s.accountRepo.Create(userID, req.Name, req.Type, req.TailNumber, req.Currency, req.Balance)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create account: %w", err)
 	}
@@ -81,6 +83,9 @@ func (s *AccountService) UpdateAccount(id uuid.UUID, userID uuid.UUID, req *Upda
 			return nil, fmt.Errorf("invalid account type: %s", req.Type)
 		}
 		account.Type = req.Type
+	}
+	if req.TailNumber != "" {
+		account.TailNumber = req.TailNumber
 	}
 	if req.Currency != "" {
 		account.Currency = req.Currency
