@@ -84,9 +84,8 @@ func (s *AccountService) UpdateAccount(id uuid.UUID, userID uuid.UUID, req *Upda
 		}
 		account.Type = req.Type
 	}
-	if req.TailNumber != "" {
-		account.TailNumber = req.TailNumber
-	}
+	// 始终更新 TailNumber（允许设置为空字符串）
+	account.TailNumber = req.TailNumber
 	if req.Currency != "" {
 		account.Currency = req.Currency
 	}
