@@ -12,6 +12,7 @@ type ImportSource string
 const (
 	ImportSourceAlipay   ImportSource = "alipay"
 	ImportSourceWeChat   ImportSource = "wechat"
+	ImportSourceJD       ImportSource = "jd"
 	ImportSourceBank     ImportSource = "bank"
 	ImportSourceGeneric  ImportSource = "generic"
 )
@@ -73,6 +74,36 @@ type ParsedTransaction struct {
 	// Selected account/category for import (set by user in preview)
 	SelectedAccountID  *uuid.UUID `json:"selected_account_id,omitempty"`
 	SelectedCategoryID *uuid.UUID `json:"selected_category_id,omitempty"`
+
+	// === 批量导入新增字段 ===
+
+	// Batch import related
+	BatchFileID         *uuid.UUID `json:"batch_file_id,omitempty"`
+	BatchJobID          *uuid.UUID `json:"batch_job_id,omitempty"`
+
+	// Account identification enhancement
+	ParsedAccountType   string  `json:"parsed_account_type,omitempty"`   // credit_card, debit_card, ewallet
+	ParsedAccountNumber string `json:"parsed_account_number,omitempty"` // 尾号
+	ParsedBankName      string  `json:"parsed_bank_name,omitempty"`      // 银行名称
+	ParsedCardType      string  `json:"parsed_card_type,omitempty"`      // 信用卡/借记卡
+	ParsedBalance       float64 `json:"parsed_balance,omitempty"`        // 余额
+
+	// Transfer match related
+	IsTransferOut       bool    `json:"is_transfer_out,omitempty"`       // 是否转出
+	IsTransferIn        bool    `json:"is_transfer_in,omitempty"`        // 是否转入
+	TransferMatchID     *uuid.UUID `json:"transfer_match_id,omitempty"`  // 匹配的转账对ID
+	RelatedAccountName  string  `json:"related_account_name,omitempty"`  // 对方账户名
+	RelatedAccountNumber string `json:"related_account_number,omitempty"` // 对方账号
+
+	// Note merge related
+	OriginalBankNote    string  `json:"original_bank_note,omitempty"`    // 银行原始摘要
+	OriginalAppNote     string  `json:"original_app_note,omitempty"`     // 应用原始备注
+	SuggestedMergedNote string  `json:"suggested_merged_note,omitempty"` // 建议合并备注
+
+	// Status flags
+	HasAccountHint      bool    `json:"has_account_hint,omitempty"`      // 是否有账户线索
+	HasTransferMatch    bool    `json:"has_transfer_match,omitempty"`    // 是否有转账匹配
+	HasNoteMerge        bool    `json:"has_note_merge,omitempty"`          // 是否有备注合并
 }
 
 // ImportPreview represents the preview data before actual import

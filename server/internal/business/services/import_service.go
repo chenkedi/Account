@@ -55,6 +55,8 @@ func (s *ImportService) ParseFile(userID uuid.UUID, req *ParseRequest) (*models.
 		transactions, err = s.parseAlipayCSV(req.File)
 	case models.ImportSourceWeChat:
 		transactions, err = s.parseWeChatCSV(req.File)
+	case models.ImportSourceJD:
+		transactions, err = s.parseJDCSV(req.File)
 	case models.ImportSourceBank:
 		transactions, err = s.parseBankCSV(req.File)
 	case models.ImportSourceGeneric:
@@ -805,4 +807,125 @@ func (s *ImportService) findMatchingAccounts(nameHint string, accounts []models.
 	}
 
 	return matches
+}
+
+// parseJDCSV parses JD (京东) bill CSV format
+func (s *ImportService) parseJDCSV(r io.Reader) ([]models.ParsedTransaction, error) {
+	reader := csv.NewReader(r)
+	reader.LazyQuotes = true
+	reader.FieldsPerRecord = -1
+	reader.Comma = ','
+
+	records, err := reader.ReadAll()
+	if err != nil {
+		return nil, err
+	}
+
+	if len(records) < 2 {
+		return nil, fmt.Errorf("no data in file")
+	}
+
+	// Find header row - JD format varies
+	headerIndex := 0
+	for i, record := range records {
+		if len(record) > 0 {
+			headerStr := strings.Join(record, "")
+			if strings.Contains(headerStr, "订单号") ||
+				strings.Contains(headerStr, "消费时间") ||
+				strings.Contains(headerStr, "金额") {
+				headerIndex = i
+				break
+			}
+		}
+		if i > 10 {
+			break
+		}
+	}
+
+	transactions := make([]models.ParsedTransaction, 0)
+
+	for i := headerIndex + 1; i < len(records); i++ {
+		record := records[i]
+		if len(record) < 3 {
+			continue
+		}
+
+		tx := models.ParsedTransaction{
+			RawData:  make(map[string]string),
+			Currency: "CNY",
+			Source:   models.ImportSourceJD,
+		}
+
+		// Store raw data
+		for j, field := range record {
+			if headerIndex < len(records) && j < len(records[headerIndex]) {
+				tx.RawData[records[headerIndex][j]] = field
+			}
+		}
+
+		// Parse fields for JD format
+		// 订单号、消费时间、金额、商品名称、订单状态、支付方式等
+
+		// Parse date
+		for _, key := range []string{"消费时间", "下单时间", "时间", "日期"} {
+			if val, ok := tx.RawData[key]; ok && val != "" {
+				tx.TransactionDate, _ = s.parseChineseDate(val)
+				break
+			}
+		}
+
+		// Parse amount
+		for _, key := range []string{"金额", "实付金额", "支付金额", "总价", "订单金额"} {
+			if val, ok := tx.RawData[key]; ok && val != "" {
+				tx.Amount, _ = s.parseAmount(val)
+				break
+			}
+		}
+
+		// Determine type (JD is mostly expense)
+		tx.Type = models.TransactionTypeExpense
+		for _, key := range []string{"订单状态", "类型", "收支类型"} {
+			if val, ok := tx.RawData[key]; ok {
+				if strings.Contains(val, "退款") || strings.Contains(val, "退") || strings.Contains(val, "取消") {
+					tx.Type = models.TransactionTypeIncome // 退款视为收入
+				}
+			}
+		}
+
+		// Get product info
+		for _, key := range []string{"商品名称", "商品", "名称", "商品标题", "订单描述"} {
+			if val, ok := tx.RawData[key]; ok && val != "" {
+				tx.Note = val
+				break
+			}
+		}
+
+		// Get payment method (as account name hint)
+		for _, key := range []string{"支付方式", "支付渠道", "付款方式", "支付工具"} {
+			if val, ok := tx.RawData[key]; ok && val != "" {
+				tx.AccountName = "京东" + val
+				break
+			}
+		}
+
+		// Get merchant/counterparty
+		for _, key := range []string{"商户", "商家", "店铺名称", "卖家"} {
+			if val, ok := tx.RawData[key]; ok && val != "" {
+				tx.Counterparty = val
+				break
+			}
+		}
+
+		if tx.Counterparty == "" && tx.Note != "" {
+			tx.Counterparty = "京东购物"
+		}
+
+		tx.CategoryHint = strings.Join([]string{tx.Counterparty, tx.Note}, " ")
+
+		if tx.Amount > 0 && !tx.TransactionDate.IsZero() {
+			transactions = append(transactions, tx)
+		}
+	}
+
+	return transactions, nil
 }

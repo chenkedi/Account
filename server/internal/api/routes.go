@@ -44,6 +44,7 @@ func SetupRouter(cfg *config.Config, db *sqlx.DB, redis *redis.Client, logger *z
 	transactionService := services.NewTransactionService(transactionRepo, accountRepo, categoryRepo)
 	syncService := services.NewSyncService(syncRepo, accountRepo, categoryRepo, transactionRepo)
 	importService := services.NewImportService(transactionRepo, accountRepo, categoryRepo, logger)
+	batchImportService := services.NewBatchImportService(importService, accountRepo, transactionRepo, categoryRepo, logger)
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(userRepo, categoryRepo, tokenMgr, logger)
@@ -52,6 +53,7 @@ func SetupRouter(cfg *config.Config, db *sqlx.DB, redis *redis.Client, logger *z
 	transactionHandler := handlers.NewTransactionHandler(transactionService, logger)
 	syncHandler := handlers.NewSyncHandler(syncService, logger)
 	importHandler := handlers.NewImportHandler(importService, logger)
+	batchImportHandler := handlers.NewBatchImportHandler(batchImportService, logger)
 	wsHandler := handlers.NewWebSocketHandler(syncEngine.GetNotifier(), tokenMgr, logger)
 
 	authMiddleware := middleware.NewAuthMiddleware(tokenMgr)
@@ -141,6 +143,17 @@ func SetupRouter(cfg *config.Config, db *sqlx.DB, redis *redis.Client, logger *z
 			{
 				importGroup.POST("/upload", importHandler.UploadAndParse)
 				importGroup.POST("/execute", importHandler.ExecuteImport)
+			}
+
+			// Batch import endpoints
+			batchImportGroup := protected.Group("/batch-imports")
+			{
+				batchImportGroup.POST("", batchImportHandler.CreateBatchImport)
+				batchImportGroup.GET("", batchImportHandler.ListBatchImports)
+				batchImportGroup.GET("/:job_id", batchImportHandler.GetBatchImportStatus)
+				batchImportGroup.GET("/:job_id/preview", batchImportHandler.GetBatchImportPreview)
+				batchImportGroup.POST("/:job_id/execute", batchImportHandler.ExecuteBatchImport)
+				batchImportGroup.DELETE("/:job_id", batchImportHandler.DeleteBatchImport)
 			}
 		}
 	}
