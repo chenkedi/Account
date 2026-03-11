@@ -130,6 +130,9 @@ export function AccountsPage() {
     } else {
       await createAccount(data as AccountCreateInput);
     }
+    // 提交成功后关闭模态框并清除选中的账户
+    setIsFormModalOpen(false);
+    setSelectedAccount(null);
   };
 
   return (
@@ -288,7 +291,10 @@ export function AccountsPage() {
 
       <AccountFormModal
         isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
+        onClose={() => {
+          setIsFormModalOpen(false);
+          setSelectedAccount(null);
+        }}
         account={selectedAccount}
         onSubmit={handleFormSubmit}
         isLoading={isLoading}

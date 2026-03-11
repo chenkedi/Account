@@ -61,7 +61,7 @@ func (r *AccountRepository) GetByID(id uuid.UUID, userID uuid.UUID) (*models.Acc
 	var account models.Account
 
 	query := `
-		SELECT id, user_id, name, type, tail_number, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted
+		SELECT id, user_id, name, type, COALESCE(tail_number, '') as tail_number, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted
 		FROM accounts
 		WHERE id = $1 AND user_id = $2 AND is_deleted = false
 	`
@@ -81,7 +81,7 @@ func (r *AccountRepository) GetAll(userID uuid.UUID) ([]models.Account, error) {
 	var accounts []models.Account
 
 	query := `
-		SELECT id, user_id, name, type, tail_number, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted
+		SELECT id, user_id, name, type, COALESCE(tail_number, '') as tail_number, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted
 		FROM accounts
 		WHERE user_id = $1 AND is_deleted = false
 		ORDER BY name ASC
@@ -156,7 +156,7 @@ func (r *AccountRepository) GetModifiedSince(userID uuid.UUID, since time.Time) 
 	var accounts []models.Account
 
 	query := `
-		SELECT id, user_id, name, type, tail_number, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted
+		SELECT id, user_id, name, type, COALESCE(tail_number, '') as tail_number, currency, balance, created_at, updated_at, last_modified_at, version, is_deleted
 		FROM accounts
 		WHERE user_id = $1 AND last_modified_at > $2
 	`

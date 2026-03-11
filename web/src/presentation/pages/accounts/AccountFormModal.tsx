@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   Box,
   Button,
@@ -70,13 +71,26 @@ export function AccountFormModal({
   } = useForm<AccountFormValues>({
     resolver: zodResolver(accountSchema),
     defaultValues: {
-      name: account?.name || '',
-      type: account?.type || 'cash',
-      tail_number: account?.tail_number || '',
-      balance: account?.balance.toString() || '0',
-      currency: account?.currency || 'CNY',
+      name: '',
+      type: 'cash',
+      tail_number: '',
+      balance: '0',
+      currency: 'CNY',
     },
   });
+
+  // 当模态框打开或账户数据变化时，重置表单
+  useEffect(() => {
+    if (isOpen) {
+      reset({
+        name: account?.name || '',
+        type: account?.type || 'cash',
+        tail_number: account?.tail_number || '',
+        balance: account?.balance !== undefined ? account.balance.toString() : '0',
+        currency: account?.currency || 'CNY',
+      });
+    }
+  }, [isOpen, account, reset]);
 
   const handleFormSubmit = async (values: AccountFormValues) => {
     try {
@@ -93,7 +107,6 @@ export function AccountFormModal({
         status: 'success',
         duration: 3000,
       });
-      reset();
       onClose();
     } catch (error) {
       toast({
