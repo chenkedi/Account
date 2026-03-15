@@ -14,6 +14,6 @@ export class AuthApi {
   }
 
   async getMe(): Promise<{ user_id: string; email: string }> {
-    return this.apiClient.get<{ user_id: string; email: string }>(`${API_CONSTANTS.apiPrefix}/me`);
+    return this.apiClient.get<{ user_id: string; email: string }>('/me');
   }
 }
